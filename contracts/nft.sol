@@ -4,17 +4,17 @@
 pragma solidity ^0.8.4;
 
 
-import "@openzeppelin/contracts@4.6.0/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts@4.6.0/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts@4.6.0/token/ERC721/extensions/IERC721Metadata.sol";
-import "@openzeppelin/contracts@4.6.0/utils/introspection/ERC165.sol";
-import "@openzeppelin/contracts@4.6.0/utils/Address.sol";
-import "@openzeppelin/contracts@4.6.0/utils/Counters.sol";
-import "@openzeppelin/contracts@4.6.0/utils/Context.sol";
-import "@openzeppelin/contracts@4.6.0/utils/Strings.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 
-contract nft is Context, ERC165, IERC721, IERC721Metadata {
+contract nft is Context, ERC165,IERC721Metadata {
     using Address for address;
     using Strings for uint256;
 
@@ -22,7 +22,7 @@ contract nft is Context, ERC165, IERC721, IERC721Metadata {
 
     Counters.Counter private _tokenIds;
 
-    string private _name;
+    string private _name; 
 
     string private _symbol;
 
@@ -160,7 +160,6 @@ contract nft is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId
     ) public virtual override {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
 
         _transfer(from, to, tokenId);
     }
@@ -185,10 +184,10 @@ contract nft is Context, ERC165, IERC721, IERC721Metadata {
         _safeTransfer(from, to, tokenId, data);
     }
 
-     function mint(address to,address[] memory collaborator,uint256[] memory collaboratorPercent,string memory uri) public {
+     function mint(address[] memory collaborator,uint256[] memory collaboratorPercent,string memory uri) public {
           _tokenIds.increment();
         uint256 tokenId = _tokenIds.current();
-        _safeMint(to, collaborator,collaboratorPercent,tokenId);
+        _safeMint(msg.sender, collaborator,collaboratorPercent,tokenId);
         _setTokenURI(tokenId, uri);
     }
 
