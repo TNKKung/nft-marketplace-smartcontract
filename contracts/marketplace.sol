@@ -5,17 +5,19 @@ import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/uti
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
 import "github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol";
 
-contract marketplace is ReentrancyGuard {
+contract marketplace is ReentrancyGuard{
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
-    
+
+
      address public owner;
          uint256 listingPrice = 0.025 ether;
      
      constructor() {
          owner = msg.sender;
      }
+
      
      struct MarketItem {
          uint itemId;
@@ -78,6 +80,42 @@ contract marketplace is ReentrancyGuard {
                 false
             );
         }
+
+    function itemFromTokenId(uint256 tokenId) public view returns (uint256) {
+        uint itemCount = _itemIds.current();
+        uint currentIndex = 0;
+
+        MarketItem memory items;
+        for (uint i = 0; i < itemCount; i++) {
+            if (idToMarketItem[i + 1].tokenId == tokenId) {
+                uint currentId = i + 1;
+                MarketItem storage currentItem = idToMarketItem[currentId];
+                items = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items.itemId;
+    }
+
+    function priceFromTokenId(uint256 tokenId) public view returns (uint256) {
+        uint itemCount = _itemIds.current();
+        uint currentIndex = 0;
+
+        MarketItem[] memory items = new MarketItem[](1);
+        for (uint i = 0; i < itemCount; i++) {
+            if (idToMarketItem[i + 1].tokenId == tokenId) {
+                uint currentId = i + 1;
+                MarketItem storage currentItem = idToMarketItem[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items[0].price;
+    }
+
+    function TransferToken(address payable _to) public payable {
+       _to.transfer(msg.value);
+    }
         
     function saleNFTItem(
         address nftContract,
@@ -85,6 +123,7 @@ contract marketplace is ReentrancyGuard {
         ) public payable nonReentrant {
             uint tokenId = idToMarketItem[itemId].tokenId;
             bool sold = idToMarketItem[itemId].sold;
+            // uint256 price = idToMarketItem[itemId].price;
             // address seller = idToMarketItem[tokenId].seller;
             require(sold != true, "This Sale has alredy finnished");
             emit MarketItemSold(
@@ -96,6 +135,27 @@ contract marketplace is ReentrancyGuard {
             IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
             idToMarketItem[itemId].owner = payable(msg.sender);
             _itemsSold.increment();
+            idToMarketItem[itemId].sold = true;
+        }
+
+         function unListNFTItem(
+        address nftContract,
+        uint256 itemId
+        ) public payable nonReentrant {
+            uint tokenId = idToMarketItem[itemId].tokenId;
+            bool sold = idToMarketItem[itemId].sold;
+            address ownerNFT = idToMarketItem[itemId].seller;
+            // address seller = idToMarketItem[tokenId].seller;
+            require(sold != true, "This Sale has alredy finnished");
+            require(ownerNFT == msg.sender,"Only seller may unlist an item");
+
+            emit MarketItemSold(
+                itemId,
+                msg.sender
+                );
+
+            IERC721(nftContract).transferFrom(address(this), ownerNFT, tokenId);
+            idToMarketItem[itemId].owner = payable(msg.sender);
             idToMarketItem[itemId].sold = true;
         }
         
@@ -117,3 +177,4 @@ contract marketplace is ReentrancyGuard {
     }
       
 }
+

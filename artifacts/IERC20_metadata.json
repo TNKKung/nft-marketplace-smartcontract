@@ -6,150 +6,125 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [],
-				"stateMutability": "nonpayable",
-				"type": "constructor"
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "spender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					}
+				],
+				"name": "Approval",
+				"type": "event"
 			},
 			{
 				"anonymous": false,
 				"inputs": [
 					{
 						"indexed": true,
-						"internalType": "uint256",
-						"name": "itemId",
-						"type": "uint256"
-					},
-					{
-						"indexed": true,
 						"internalType": "address",
-						"name": "nftContract",
+						"name": "from",
 						"type": "address"
 					},
 					{
 						"indexed": true,
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
 						"internalType": "address",
-						"name": "seller",
+						"name": "to",
 						"type": "address"
 					},
 					{
 						"indexed": false,
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					}
+				],
+				"name": "Transfer",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
 						"name": "owner",
 						"type": "address"
 					},
 					{
-						"indexed": false,
+						"internalType": "address",
+						"name": "spender",
+						"type": "address"
+					}
+				],
+				"name": "allowance",
+				"outputs": [
+					{
 						"internalType": "uint256",
-						"name": "price",
+						"name": "",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "spender",
+						"type": "address"
 					},
 					{
-						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "approve",
+				"outputs": [
+					{
 						"internalType": "bool",
-						"name": "sold",
+						"name": "",
 						"type": "bool"
 					}
 				],
-				"name": "MarketItemCreated",
-				"type": "event"
+				"stateMutability": "nonpayable",
+				"type": "function"
 			},
 			{
-				"anonymous": false,
 				"inputs": [
 					{
-						"indexed": true,
-						"internalType": "uint256",
-						"name": "itemId",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
 						"internalType": "address",
-						"name": "owner",
+						"name": "account",
 						"type": "address"
 					}
 				],
-				"name": "MarketItemSold",
-				"type": "event"
-			},
-			{
-				"inputs": [
+				"name": "balanceOf",
+				"outputs": [
 					{
-						"internalType": "address payable",
-						"name": "_to",
-						"type": "address"
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
-				"name": "TransferToken",
-				"outputs": [],
-				"stateMutability": "payable",
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
 				"inputs": [],
-				"name": "fetchNFTItems",
-				"outputs": [
-					{
-						"components": [
-							{
-								"internalType": "uint256",
-								"name": "itemId",
-								"type": "uint256"
-							},
-							{
-								"internalType": "address",
-								"name": "nftContract",
-								"type": "address"
-							},
-							{
-								"internalType": "uint256",
-								"name": "tokenId",
-								"type": "uint256"
-							},
-							{
-								"internalType": "address payable",
-								"name": "seller",
-								"type": "address"
-							},
-							{
-								"internalType": "address payable",
-								"name": "owner",
-								"type": "address"
-							},
-							{
-								"internalType": "uint256",
-								"name": "price",
-								"type": "uint256"
-							},
-							{
-								"internalType": "bool",
-								"name": "sold",
-								"type": "bool"
-							}
-						],
-						"internalType": "struct marketplace.MarketItem[]",
-						"name": "",
-						"type": "tuple[]"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					}
-				],
-				"name": "itemFromTokenId",
+				"name": "totalSupply",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -164,91 +139,53 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "nftContract",
+						"name": "recipient",
 						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "price",
+						"name": "amount",
 						"type": "uint256"
 					}
 				],
-				"name": "listedNFTItem",
-				"outputs": [],
-				"stateMutability": "payable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "owner",
+				"name": "transfer",
 				"outputs": [
 					{
-						"internalType": "address",
+						"internalType": "bool",
 						"name": "",
-						"type": "address"
+						"type": "bool"
 					}
 				],
-				"stateMutability": "view",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256",
-						"name": "tokenId",
+						"name": "amount",
 						"type": "uint256"
 					}
 				],
-				"name": "priceFromTokenId",
+				"name": "transferFrom",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "bool",
 						"name": "",
-						"type": "uint256"
+						"type": "bool"
 					}
 				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "nftContract",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "itemId",
-						"type": "uint256"
-					}
-				],
-				"name": "saleNFTItem",
-				"outputs": [],
-				"stateMutability": "payable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "nftContract",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "itemId",
-						"type": "uint256"
-					}
-				],
-				"name": "unListNFTItem",
-				"outputs": [],
-				"stateMutability": "payable",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			}
 		],
@@ -265,7 +202,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts\\marketplace.sol": "marketplace"
+			"contracts\\marketplace.sol": "IERC20"
 		},
 		"evmVersion": "berlin",
 		"libraries": {},
@@ -280,11 +217,11 @@
 	},
 	"sources": {
 		"contracts\\marketplace.sol": {
-			"keccak256": "0x45821670bfd448cac5695b76750aaea0849c17d47ab74cc18735239ccbeae75a",
+			"keccak256": "0x3a2dbfe28895ccbe30c58ce1255bbfb466403de5a5c1415948ee56778e34cc42",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://bee25fc709853efa989beef5634e9c5f1679fe30d2de5cfac45e334578c6b20c",
-				"dweb:/ipfs/QmYhDKGGfieSMw5BSFtPeMRwHKteAm1rx4RtYvJKwy1NKb"
+				"bzz-raw://a2c44a5f45daf45a7b4d750a6b08f78107f10ac32c6f21d0b04ec6f2e23b171a",
+				"dweb:/ipfs/QmVyReTZjKzxgwesXUTs1qsF1uq7itvH41GPZvegigFokx"
 			]
 		},
 		"github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol": {
