@@ -26,12 +26,20 @@ contract nft is Context, ERC165,IERC721Metadata {
 
     string private _symbol;
 
+    struct NFT {
+         address _owners;
+         address[] _collaborators;
+         uint256[] _collaboratorsPercentage;
+         string _tokenURI;
+         uint256 counterTranfers;
+     }
 
-    mapping(uint256 => address) private _owners;
 
-    mapping(uint256 => address[]) private _collaborators;
+    // mapping(uint256 => address) private _owners;
 
-    mapping(uint256 => uint256[]) private _collaboratorsPercentage;
+    // mapping(uint256 => address[]) private _collaborators;
+
+    // mapping(uint256 => uint256[]) private _collaboratorsPercentage;
 
     mapping(address => uint256) private _balances;                                                          
 
@@ -39,13 +47,24 @@ contract nft is Context, ERC165,IERC721Metadata {
 
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-    mapping(uint256 => string) private _tokenURIs;
+    // mapping(uint256 => string) private _tokenURIs;
+
+    // mapping(uint256 => uint256) private counterTranfers;
+
+    mapping(uint256 => NFT) private tokenIdToNFT;
+
 
 
     constructor(string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
     }
+
+
+    event Mint (
+        uint256 tokenId,
+        address owner
+    );
     
 
 
@@ -56,10 +75,20 @@ contract nft is Context, ERC165,IERC721Metadata {
             super.supportsInterface(interfaceId);
     }
 
+   function _incrementCounterTransfers(uint256 tokenId) public {
+        uint256 count = tokenIdToNFT[tokenId].counterTranfers;
+        tokenIdToNFT[tokenId].counterTranfers = count+1;
+    }
+
+     function getCounterTransfers(uint256 tokenId) public view returns (uint256) {
+        uint256 count = tokenIdToNFT[tokenId].counterTranfers;
+        return count;
+    }
+
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
 
-        string memory _tokenUri = _tokenURIs[tokenId];
+        string memory _tokenUri = tokenIdToNFT[tokenId]._tokenURI;
         string memory base = _baseURI();
 
         if (bytes(base).length == 0) {
@@ -75,7 +104,7 @@ contract nft is Context, ERC165,IERC721Metadata {
 
     function _setTokenURI(uint256 tokenId, string memory _tokenUri) internal virtual {
         require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
-        _tokenURIs[tokenId] = _tokenUri;
+        tokenIdToNFT[tokenId]._tokenURI = _tokenUri;
     }
 
 
@@ -87,7 +116,7 @@ contract nft is Context, ERC165,IERC721Metadata {
 
 
     function ownerOf(uint256 tokenId) public view virtual override returns (address) {
-        address owner = _owners[tokenId];
+        address owner = tokenIdToNFT[tokenId]._owners;
         require(owner != address(0), "ERC721: invalid token ID");
         return owner;
     }
@@ -97,12 +126,12 @@ contract nft is Context, ERC165,IERC721Metadata {
     }
 
      function collaboratotOf(uint256 tokenId) public view virtual returns (address[] memory) {
-        address[] memory collaborator = _collaborators[tokenId];
+        address[] memory collaborator = tokenIdToNFT[tokenId]._collaborators;
         return collaborator;
     }
 
     function collaboratotPercentageOf(uint256 tokenId) public view virtual returns (uint256[] memory) {
-        uint256[] memory collaboratorPercentage = _collaboratorsPercentage[tokenId];
+        uint256[] memory collaboratorPercentage = tokenIdToNFT[tokenId]._collaboratorsPercentage;
         return collaboratorPercentage;
     }
 
@@ -187,6 +216,7 @@ contract nft is Context, ERC165,IERC721Metadata {
      function mint(address[] memory collaborator,uint256[] memory collaboratorPercent,string memory uri) public {
           _tokenIds.increment();
         uint256 tokenId = _tokenIds.current();
+
         _safeMint(msg.sender, collaborator,collaboratorPercent,tokenId);
         _setTokenURI(tokenId, uri);
     }
@@ -204,7 +234,7 @@ contract nft is Context, ERC165,IERC721Metadata {
     }
 
     function _exists(uint256 tokenId) internal view virtual returns (bool) {
-        return _owners[tokenId] != address(0);
+        return tokenIdToNFT[tokenId]._owners != address(0);
     }
 
 
@@ -243,9 +273,14 @@ contract nft is Context, ERC165,IERC721Metadata {
             _balances[to] += 1;
         }
 
-        _owners[tokenId] = to;
-        _collaborators[tokenId] = collaborator;
-       _collaboratorsPercentage[tokenId] = collaboratorPercent;
+                 emit Mint(
+                tokenId,
+                     to
+                );
+
+        tokenIdToNFT[tokenId]._owners = to;
+        tokenIdToNFT[tokenId]._collaborators = collaborator;
+        tokenIdToNFT[tokenId]._collaboratorsPercentage = collaboratorPercent;
 
         emit Transfer(address(0), to, tokenId);
 
@@ -266,7 +301,7 @@ contract nft is Context, ERC165,IERC721Metadata {
 
             _balances[owner] -= 1;
         }
-        delete _owners[tokenId];
+        delete tokenIdToNFT[tokenId]._owners;
 
         emit Transfer(owner, address(0), tokenId);
 
@@ -295,7 +330,8 @@ contract nft is Context, ERC165,IERC721Metadata {
             _balances[from] -= 1;
             _balances[to] += 1;
         }
-        _owners[tokenId] = to;
+        _incrementCounterTransfers(tokenId);
+        tokenIdToNFT[tokenId]._owners = to;
 
         emit Transfer(from, to, tokenId);
 
